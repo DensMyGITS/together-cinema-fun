@@ -1,65 +1,101 @@
 import { useState } from "react";
-import MainLayout from "@/components/layout/MainLayout";
+import { useNavigate } from "react-router-dom";
 import MovieCard from "@/components/movies/MovieCard";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-// Temporary mock data
-const MOCK_MOVIES = [
+// Mock data for demonstration
+const mockMovies = [
   {
-    id: 1,
+    id: "1",
     title: "Inception",
-    image: "https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=2059&auto=format&fit=crop",
+    image: "/placeholder.svg",
+    year: 2010,
+    genre: "Sci-Fi",
   },
   {
-    id: 2,
+    id: "2",
     title: "The Dark Knight",
-    image: "https://images.unsplash.com/photo-1440404653325-ab127d49abc1?q=80&w=2070&auto=format&fit=crop",
+    image: "/placeholder.svg",
+    year: 2008,
+    genre: "Action",
   },
   {
-    id: 3,
+    id: "3",
     title: "Interstellar",
-    image: "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=2094&auto=format&fit=crop",
+    image: "/placeholder.svg",
+    year: 2014,
+    genre: "Sci-Fi",
   },
 ];
 
+const genres = ["Все жанры", "Action", "Sci-Fi", "Drama", "Comedy"];
+const years = ["Все годы", "2024", "2023", "2022", "2021", "2020"];
+
 const Index = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedGenre, setSelectedGenre] = useState("Все жанры");
+  const [selectedYear, setSelectedYear] = useState("Все годы");
 
-  const handleWatch = (movieId: number) => {
-    console.log("Watch movie:", movieId);
-  };
-
-  const handleDetails = (movieId: number) => {
-    console.log("Show details for movie:", movieId);
-  };
+  const filteredMovies = mockMovies.filter((movie) => {
+    const matchesSearch = movie.title
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+    const matchesGenre =
+      selectedGenre === "Все жанры" || movie.genre === selectedGenre;
+    const matchesYear =
+      selectedYear === "Все годы" || movie.year.toString() === selectedYear;
+    return matchesSearch && matchesGenre && matchesYear;
+  });
 
   return (
-    <MainLayout>
-      <div className="space-y-8">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Поиск фильмов..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-        
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {MOCK_MOVIES.map((movie) => (
-            <MovieCard
-              key={movie.id}
-              title={movie.title}
-              image={movie.image}
-              onWatch={() => handleWatch(movie.id)}
-              onDetails={() => handleDetails(movie.id)}
-            />
-          ))}
-        </div>
+    <div className="space-y-6">
+      <div className="flex flex-col md:flex-row gap-4">
+        <Input
+          placeholder="Поиск фильмов..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="md:w-1/3"
+        />
+        <Select value={selectedGenre} onValueChange={setSelectedGenre}>
+          <SelectTrigger className="md:w-1/4">
+            <SelectValue placeholder="Выберите жанр" />
+          </SelectTrigger>
+          <SelectContent>
+            {genres.map((genre) => (
+              <SelectItem key={genre} value={genre}>
+                {genre}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={selectedYear} onValueChange={setSelectedYear}>
+          <SelectTrigger className="md:w-1/4">
+            <SelectValue placeholder="Выберите год" />
+          </SelectTrigger>
+          <SelectContent>
+            {years.map((year) => (
+              <SelectItem key={year} value={year}>
+                {year}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
-    </MainLayout>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredMovies.map((movie) => (
+          <MovieCard
+            key={movie.id}
+            title={movie.title}
+            image={movie.image}
+            onWatch={() => navigate(`/watch/${movie.id}`)}
+            onDetails={() => navigate(`/movie/${movie.id}`)}
+          />
+        ))}
+      </div>
+    </div>
   );
 };
 

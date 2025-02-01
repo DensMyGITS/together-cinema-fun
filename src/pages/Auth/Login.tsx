@@ -1,25 +1,28 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { LogIn } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle login logic here
+    // TODO: Implement login logic
+    console.log("Login attempt with:", { email, password });
   };
 
   return (
-    <div className="container flex items-center justify-center min-h-[calc(100vh-4rem)]">
+    <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">
-            Вход в аккаунт
-          </CardTitle>
+          <CardTitle>Вход</CardTitle>
+          <CardDescription>
+            Войдите в свой аккаунт чтобы смотреть фильмы с друзьями
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -32,7 +35,6 @@ const Login = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="example@mail.com"
                 required
               />
             </div>
@@ -45,19 +47,21 @@ const Login = () => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
                 required
               />
             </div>
             <Button type="submit" className="w-full">
-              <LogIn className="mr-2 h-4 w-4" />
               Войти
             </Button>
-            <p className="text-sm text-center text-muted-foreground">
+            <p className="text-center text-sm">
               Нет аккаунта?{" "}
-              <a href="/register" className="text-primary hover:underline">
+              <button
+                type="button"
+                onClick={() => navigate("/register")}
+                className="text-primary hover:underline"
+              >
                 Зарегистрироваться
-              </a>
+              </button>
             </p>
           </form>
         </CardContent>
