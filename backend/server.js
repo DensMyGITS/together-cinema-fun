@@ -26,16 +26,32 @@ db.connect((err) => {
 
 // Регистрация пользователя (по умолчанию 'user')
 app.post("/register", async (req, res) => {
-  const { email, password } = req.body;
+  const { login, email, password } = req.body;
 
-  db.query("SELECT * FROM users WHERE email = ?", [email], async (err, result) => {
+  // Проверка логина
+  if (!login || login.length < 3) {
+    return res.status(400).json({ error: "Логин должен быть не менее 3 символов" });
+  }
+
+  // Проверка email на валидность
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ error: "Некорректный email" });
+  }
+
+  // Проверка длины пароля
+  if (password.length < 8) {
+    return res.status(400).json({ error: "Пароль должен быть не менее 8 символов" });
+  }
+
+  db.query("SELECT * FROM users WHERE login = ? OR email = ?", [login, email], async (err, result) => {
     if (err) return res.status(500).json({ error: "Ошибка сервера" });
-    if (result.length > 0) return res.status(400).json({ error: "Email уже зарегистрирован" });
+    if (result.length > 0) return res.status(400).json({ error: "Логин или email уже заняты" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
     db.query(
-      "INSERT INTO users (email, password, role) VALUES (?, ?, 'user')",
-      [email, hashedPassword],
+      "INSERT INTO users (login, email, password, role) VALUES (?, ?, ?, 'user')",
+      [login, email, hashedPassword],
       (err) => {
         if (err) return res.status(500).json({ error: "Ошибка регистрации" });
         res.json({ message: "Регистрация успешна" });
@@ -46,45 +62,25 @@ app.post("/register", async (req, res) => {
 
 // Авторизация пользователя
 app.post("/login", (req, res) => {
-  const { email, password } = req.body;
+  const { loginOrEmail, password } = req.body;
 
-  db.query("SELECT * FROM users WHERE email = ?", [email], async (err, result) => {
-    if (err) return res.status(500).json({ error: "Ошибка сервера" });
-    if (result.length === 0) return res.status(400).json({ error: "Неверные учетные данные" });
+  db.query(
+    "SELECT * FROM users WHERE login = ? OR email = ?",
+    [loginOrEmail, loginOrEmail],
+    async (err, result) => {
+      if (err) return res.status(500).json({ error: "Ошибка сервера" });
+      if (result.length === 0) return res.status(400).json({ error: "Неверные учетные данные" });
 
-    const user = result[0];
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ error: "Неверные учетные данные" });
+      const user = result[0];
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) return res.status(400).json({ error: "Неверные учетные данные" });
 
-    const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
-      expiresIn: process.env.JWT_EXPIRES_IN,
-    });
-    res.json({ token, role: user.role });
-  });
+      const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
+      res.json({ token });
+    }
+  );
 });
 
-// Middleware для проверки токена
-const verifyToken = (req, res, next) => {
-  const token = req.headers["authorization"];
-  if (!token) return res.status(403).json({ error: "Нет доступа" });
-
-  jwt.verify(token.split(" ")[1], process.env.JWT_SECRET, (err, decoded) => {
-    if (err) return res.status(401).json({ error: "Неверный токен" });
-    req.user = decoded;
-    next();
-  });
-};
-
-// Middleware для проверки роли администратора
-const isAdmin = (req, res, next) => {
-  if (req.user.role !== "admin") return res.status(403).json({ error: "Доступ запрещён" });
-  next();
-};
-
-// Пример защищённого маршрута (только для админа)
-app.get("/admin/dashboard", verifyToken, isAdmin, (req, res) => {
-  res.json({ message: "Добро пожаловать в админку!" });
+app.listen(PORT, () => {
+  console.log(`Сервер работает на порту ${PORT}`);
 });
-
-// Запуск сервера
-app.listen(PORT, () => console.log(`Сервер запущен на порту ${PORT}`));

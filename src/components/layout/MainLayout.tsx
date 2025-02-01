@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Moon, Sun, Monitor } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";  // Декодируем токен
+import { jwtDecode } from "jwt-decode";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -32,7 +32,10 @@ const MainLayout = ({ children }: MainLayoutProps) => {
       } catch (error) {
         console.error("Ошибка при декодировании токена", error);
         localStorage.removeItem("token");
+        setRole(null); // сбросить роль при ошибке с токеном
       }
+    } else {
+      setRole(null); // сбросить роль, если токен удален
     }
   }, []);
 
@@ -48,6 +51,11 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     dark: Moon,
     system: Monitor,
   }[theme];
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setRole(null); // Сбросить роль после выхода
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -68,13 +76,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
               <ThemeIcon className="h-4 w-4" />
             </Button>
             {role ? (
-              <Button
-                variant="destructive"
-                onClick={() => {
-                  localStorage.removeItem("token");
-                  window.location.reload();
-                }}
-              >
+              <Button variant="destructive" onClick={handleLogout}>
                 Выйти
               </Button>
             ) : (
