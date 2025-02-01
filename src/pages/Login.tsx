@@ -40,7 +40,7 @@ const Login = () => {
         <h1 className="text-2xl font-bold mb-4">Войти в аккаунт</h1>
 
         {message && (
-          <p className={`mb-4 ${isError ? "text-red-600" : "text-green-600"}`}>
+          <p className={isError ? "text-red-600" : "text-green-600"}>
             {message}
           </p>
         )}

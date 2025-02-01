@@ -28,18 +28,15 @@ db.connect((err) => {
 app.post("/register", async (req, res) => {
   const { login, email, password } = req.body;
 
-  // Проверка логина
   if (!login || login.length < 3) {
     return res.status(400).json({ error: "Логин должен быть не менее 3 символов" });
   }
 
-  // Проверка email на валидность
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
     return res.status(400).json({ error: "Некорректный email" });
   }
 
-  // Проверка длины пароля
   if (password.length < 8) {
     return res.status(400).json({ error: "Пароль должен быть не менее 8 символов" });
   }
@@ -69,18 +66,18 @@ app.post("/login", (req, res) => {
     [loginOrEmail, loginOrEmail],
     async (err, result) => {
       if (err) return res.status(500).json({ error: "Ошибка сервера" });
-      if (result.length === 0) return res.status(400).json({ error: "Неверные учетные данные" });
+      if (result.length === 0) return res.status(400).json({ error: "Неверный логин или пароль" });
 
       const user = result[0];
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) return res.status(400).json({ error: "Неверные учетные данные" });
+      const passwordMatch = await bcrypt.compare(password, user.password);
+      if (!passwordMatch) return res.status(400).json({ error: "Неверный логин или пароль" });
 
-      const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
+      const token = jwt.sign({ id: user.id, role: user.role, login: user.login }, process.env.JWT_SECRET, { expiresIn: "1h" });
       res.json({ token });
     }
   );
 });
 
 app.listen(PORT, () => {
-  console.log(`Сервер работает на порту ${PORT}`);
+  console.log(`Сервер запущен на порту ${PORT}`);
 });

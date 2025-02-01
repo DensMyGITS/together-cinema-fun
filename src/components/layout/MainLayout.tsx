@@ -12,6 +12,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
   const savedTheme = localStorage.getItem("theme") as "light" | "dark" | "system" | null;
   const [theme, setTheme] = useState<"light" | "dark" | "system">(savedTheme || "system");
   const [role, setRole] = useState<string | null>(null);
+  const [username, setUsername] = useState<string | null>(null);
 
   useEffect(() => {
     localStorage.setItem("theme", theme);
@@ -28,14 +29,18 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     if (token) {
       try {
         const decoded: any = jwtDecode(token);
+        console.log(decoded); // Проверяем содержимое токена
         setRole(decoded.role);
+        setUsername(decoded.login); // Устанавливаем login из токена
       } catch (error) {
         console.error("Ошибка при декодировании токена", error);
         localStorage.removeItem("token");
-        setRole(null); // сбросить роль при ошибке с токеном
+        setRole(null);
+        setUsername(null);
       }
     } else {
-      setRole(null); // сбросить роль, если токен удален
+      setRole(null);
+      setUsername(null);
     }
   }, []);
 
@@ -54,7 +59,8 @@ const MainLayout = ({ children }: MainLayoutProps) => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    setRole(null); // Сбросить роль после выхода
+    setRole(null);
+    setUsername(null);
   };
 
   return (
@@ -69,6 +75,11 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                 <Link to="/add-movie" className="text-foreground/60 hover:text-foreground">+ Добавить фильм</Link>
                 <Link to="/manage-users" className="text-foreground/60 hover:text-foreground">👤 Управление пользователями</Link>
               </>
+            )}
+            {role && username && (
+              <Link to="/profile" className="text-foreground/60 hover:text-foreground">
+                Профиль: {username}
+              </Link>
             )}
           </nav>
           <div className="flex items-center space-x-4">
