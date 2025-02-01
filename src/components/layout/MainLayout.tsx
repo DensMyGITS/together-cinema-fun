@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Moon, Sun, Monitor } from "lucide-react";
+import { Moon, Sun, Monitor, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface MainLayoutProps {
@@ -50,6 +50,11 @@ const MainLayout = ({ children }: MainLayoutProps) => {
             >
               <ThemeIcon className="h-4 w-4" />
             </Button>
+            <a href="/profile">
+              <Button variant="ghost" size="icon" className="h-9 w-9">
+                <User className="h-4 w-4" />
+              </Button>
+            </a>
             <Button variant="default">Войти</Button>
           </div>
         </div>
