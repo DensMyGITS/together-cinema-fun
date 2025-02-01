@@ -1,26 +1,37 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Moon, Sun, Monitor } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";  // Импортируем Link для маршрутов
 
 interface MainLayoutProps {
   children: React.ReactNode;
 }
 
 const MainLayout = ({ children }: MainLayoutProps) => {
-  const [theme, setTheme] = useState<"light" | "dark" | "system">("system");
+  // Читаем текущую тему из localStorage, если она существует
+  const savedTheme = localStorage.getItem("theme") as "light" | "dark" | "system" | null;
+  
+  // Если в localStorage нет сохранённой темы, используем системную
+  const [theme, setTheme] = useState<"light" | "dark" | "system">(savedTheme || "system");
+
+  useEffect(() => {
+    // Сохраняем текущую тему в localStorage
+    localStorage.setItem("theme", theme);
+
+    // Применяем тему
+    if (theme === "system") {
+      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.classList.toggle("dark", systemTheme === "dark");
+    } else {
+      document.documentElement.classList.toggle("dark", theme === "dark");
+    }
+  }, [theme]);  // Эффект будет срабатывать при изменении темы
 
   const toggleTheme = () => {
     const themes: ("light" | "dark" | "system")[] = ["light", "dark", "system"];
     const currentIndex = themes.indexOf(theme);
     const nextTheme = themes[(currentIndex + 1) % themes.length];
     setTheme(nextTheme);
-    
-    if (nextTheme === "system") {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-      document.documentElement.classList.toggle("dark", systemTheme === "dark");
-    } else {
-      document.documentElement.classList.toggle("dark", nextTheme === "dark");
-    }
   };
 
   const ThemeIcon = {
@@ -37,9 +48,9 @@ const MainLayout = ({ children }: MainLayoutProps) => {
             <a href="/" className="text-2xl font-bold text-primary">
               Вместе-Кино
             </a>
-            <a href="/" className="text-foreground/60 hover:text-foreground">
+            <Link to="/" className="text-foreground/60 hover:text-foreground">
               Главная
-            </a>
+            </Link>
           </nav>
           <div className="flex items-center space-x-4">
             <Button
@@ -50,7 +61,13 @@ const MainLayout = ({ children }: MainLayoutProps) => {
             >
               <ThemeIcon className="h-4 w-4" />
             </Button>
-            <Button variant="default">Войти</Button>
+            {/* Добавим ссылки на страницы входа и регистрации */}
+            <Link to="/login">
+              <Button variant="default">Войти</Button>
+            </Link>
+            <Link to="/register">
+              <Button variant="default">Зарегистрироваться</Button>
+            </Link>
           </div>
         </div>
       </header>

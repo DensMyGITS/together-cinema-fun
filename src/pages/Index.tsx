@@ -51,6 +51,7 @@ const Index = () => {
           {MOCK_MOVIES.map((movie) => (
             <MovieCard
               key={movie.id}
+              id={movie.id}  // Добавлено передача id
               title={movie.title}
               image={movie.image}
               onWatch={() => handleWatch(movie.id)}
