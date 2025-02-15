@@ -135,9 +135,9 @@ const Profile = () => {
   return (
     <MainLayout>
       <div className="container max-w-2xl animate-fadeIn">
-        <Card className="mt-8">
+        <Card className="mt-8 bg-white dark:bg-gray-800">
           <CardHeader>
-            <CardTitle className="text-2xl font-bold">
+            <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
               Настройки профиля
             </CardTitle>
           </CardHeader>
@@ -152,11 +152,11 @@ const Profile = () => {
                   name="login"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Логин</FormLabel>
+                      <FormLabel className="text-gray-900 dark:text-gray-100">Логин</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input {...field} className="bg-white dark:bg-gray-700 dark:text-white" />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-red-500 dark:text-red-400" />
                     </FormItem>
                   )}
                 />
@@ -166,11 +166,11 @@ const Profile = () => {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel className="text-gray-900 dark:text-gray-100">Email</FormLabel>
                       <FormControl>
-                        <Input type="email" {...field} />
+                        <Input type="email" {...field} className="bg-white dark:bg-gray-700 dark:text-white" />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-red-500 dark:text-red-400" />
                     </FormItem>
                   )}
                 />
@@ -181,11 +181,11 @@ const Profile = () => {
                     name="currentPassword"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Текущий пароль</FormLabel>
+                        <FormLabel className="text-gray-900 dark:text-gray-100">Текущий пароль</FormLabel>
                         <FormControl>
-                          <Input type="password" {...field} />
+                          <Input type="password" {...field} className="bg-white dark:bg-gray-700 dark:text-white" />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-red-500 dark:text-red-400" />
                       </FormItem>
                     )}
                   />
@@ -195,11 +195,11 @@ const Profile = () => {
                     name="newPassword"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Новый пароль</FormLabel>
+                        <FormLabel className="text-gray-900 dark:text-gray-100">Новый пароль</FormLabel>
                         <FormControl>
-                          <Input type="password" {...field} />
+                          <Input type="password" {...field} className="bg-white dark:bg-gray-700 dark:text-white" />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-red-500 dark:text-red-400" />
                       </FormItem>
                     )}
                   />
@@ -209,17 +209,21 @@ const Profile = () => {
                     name="confirmNewPassword"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Подтвердите новый пароль</FormLabel>
+                        <FormLabel className="text-gray-900 dark:text-gray-100">Подтвердите новый пароль</FormLabel>
                         <FormControl>
-                          <Input type="password" {...field} />
+                          <Input type="password" {...field} className="bg-white dark:bg-gray-700 dark:text-white" />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-red-500 dark:text-red-400" />
                       </FormItem>
                     )}
                   />
                 </div>
 
-                <Button type="submit" disabled={isLoading} className="w-full">
+                <Button 
+                  type="submit" 
+                  disabled={isLoading} 
+                  className="w-full bg-primary hover:bg-primary/90 text-white dark:bg-primary dark:hover:bg-primary/90 dark:text-white"
+                >
                   {isLoading && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   )}
