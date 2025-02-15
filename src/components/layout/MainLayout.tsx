@@ -75,24 +75,37 @@ const MainLayout = ({ children }: MainLayoutProps) => {
       <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur">
         <div className="container flex h-16 items-center justify-between">
           <nav className="flex items-center space-x-6">
-            <a href="/" className="text-2xl font-bold text-primary">Вместе-Кино</a>
+            <Link to="/" className="text-2xl font-bold text-primary hover:text-primary/90 transition-colors">
+              Вместе-Кино
+            </Link>
             <div className="hidden md:flex md:items-center md:space-x-6">
-              <Link to="/" className="text-foreground/60 hover:text-foreground">Главная</Link>
+              <Link to="/" className="text-foreground/60 hover:text-foreground transition-colors">
+                Главная
+              </Link>
               {role === "admin" && (
                 <>
-                  <Link to="/add-movie" className="text-foreground/60 hover:text-foreground">+ Добавить фильм</Link>
-                  <Link to="/manage-users" className="text-foreground/60 hover:text-foreground">👤 Управление пользователями</Link>
+                  <Link to="/add-movie" className="text-foreground/60 hover:text-foreground transition-colors">
+                    + Добавить фильм
+                  </Link>
+                  <Link to="/manage-users" className="text-foreground/60 hover:text-foreground transition-colors">
+                    👤 Управление пользователями
+                  </Link>
                 </>
               )}
               {role && username && (
-                <Link to="/profile" className="text-foreground/60 hover:text-foreground">
+                <Link to="/profile" className="text-foreground/60 hover:text-foreground transition-colors">
                   Профиль: {username}
                 </Link>
               )}
             </div>
           </nav>
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="icon" onClick={toggleTheme} className="h-9 w-9">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={toggleTheme} 
+              className="h-9 w-9 hover:bg-accent"
+            >
               <ThemeIcon className="h-4 w-4" />
             </Button>
             <div className="hidden md:flex md:items-center md:space-x-4">
@@ -103,7 +116,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
               ) : (
                 <>
                   <Link to="/login">
-                    <Button variant="default">Войти</Button>
+                    <Button variant="outline">Войти</Button>
                   </Link>
                   <Link to="/register">
                     <Button variant="default">Зарегистрироваться</Button>
@@ -114,7 +127,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
             <Button
               variant="ghost"
               size="icon"
-              className="md:hidden"
+              className="md:hidden hover:bg-accent"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -124,39 +137,67 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         
         {/* Мобильное меню */}
         {isMobileMenuOpen && (
-          <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm md:hidden" onClick={closeMobileMenu}>
-            <div className="fixed inset-y-0 right-0 w-3/4 max-w-sm bg-background p-6 shadow-lg" onClick={e => e.stopPropagation()}>
-              <div className="flex flex-col space-y-4">
-                <Link to="/" className="text-foreground/60 hover:text-foreground" onClick={closeMobileMenu}>
-                  Главная
-                </Link>
-                {role === "admin" && (
-                  <>
-                    <Link to="/add-movie" className="text-foreground/60 hover:text-foreground" onClick={closeMobileMenu}>
-                      + Добавить фильм
-                    </Link>
-                    <Link to="/manage-users" className="text-foreground/60 hover:text-foreground" onClick={closeMobileMenu}>
-                      👤 Управление пользователями
-                    </Link>
-                  </>
-                )}
-                {role && username && (
-                  <Link to="/profile" className="text-foreground/60 hover:text-foreground" onClick={closeMobileMenu}>
-                    Профиль: {username}
+          <div 
+            className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm md:hidden animate-fadeIn" 
+            onClick={closeMobileMenu}
+          >
+            <div 
+              className="fixed inset-y-0 right-0 w-3/4 max-w-sm bg-card p-6 shadow-lg animate-slide-in-right"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="flex flex-col h-full">
+                <div className="space-y-3">
+                  <Link 
+                    to="/" 
+                    className="flex items-center space-x-2 text-lg font-semibold text-foreground hover:text-primary transition-colors" 
+                    onClick={closeMobileMenu}
+                  >
+                    Главная
                   </Link>
-                )}
-                <div className="pt-4 mt-4 border-t">
+                  {role === "admin" && (
+                    <>
+                      <Link 
+                        to="/add-movie" 
+                        className="flex items-center space-x-2 text-foreground/60 hover:text-foreground transition-colors" 
+                        onClick={closeMobileMenu}
+                      >
+                        + Добавить фильм
+                      </Link>
+                      <Link 
+                        to="/manage-users" 
+                        className="flex items-center space-x-2 text-foreground/60 hover:text-foreground transition-colors" 
+                        onClick={closeMobileMenu}
+                      >
+                        👤 Управление пользователями
+                      </Link>
+                    </>
+                  )}
+                  {role && username && (
+                    <Link 
+                      to="/profile" 
+                      className="flex items-center space-x-2 text-foreground/60 hover:text-foreground transition-colors" 
+                      onClick={closeMobileMenu}
+                    >
+                      Профиль: {username}
+                    </Link>
+                  )}
+                </div>
+                <div className="mt-auto pt-6 border-t">
                   {role ? (
-                    <Button variant="destructive" onClick={handleLogout} className="w-full">
+                    <Button variant="destructive" onClick={handleLogout} className="w-full justify-center">
                       Выйти
                     </Button>
                   ) : (
-                    <div className="space-y-2">
+                    <div className="grid gap-4">
                       <Link to="/login" onClick={closeMobileMenu} className="block">
-                        <Button variant="default" className="w-full">Войти</Button>
+                        <Button variant="outline" className="w-full justify-center">
+                          Войти
+                        </Button>
                       </Link>
                       <Link to="/register" onClick={closeMobileMenu} className="block">
-                        <Button variant="default" className="w-full">Зарегистрироваться</Button>
+                        <Button variant="default" className="w-full justify-center">
+                          Зарегистрироваться
+                        </Button>
                       </Link>
                     </div>
                   )}
