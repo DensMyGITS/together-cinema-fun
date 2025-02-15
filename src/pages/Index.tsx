@@ -4,7 +4,7 @@ import MovieCard from "@/components/movies/MovieCard";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 
-// Temporary mock data
+// Мокаем данные о фильмах
 const MOCK_MOVIES = [
   {
     id: 1,
@@ -46,11 +46,12 @@ const Index = () => {
             className="pl-10"
           />
         </div>
-        
+
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {MOCK_MOVIES.map((movie) => (
             <MovieCard
               key={movie.id}
+              id={movie.id}
               title={movie.title}
               image={movie.image}
               onWatch={() => handleWatch(movie.id)}
