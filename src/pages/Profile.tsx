@@ -11,7 +11,7 @@ const Profile = () => {
           <div className="text-center">
             <h1 className="text-3xl font-bold text-gray-900">Профиль</h1>
             <p className="mt-2 text-sm text-gray-600">
-              Управляйте вашими персональными данными.
+              Управляйте вашими персональными данными
             </p>
           </div>
           <Card className="p-6">
